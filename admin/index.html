@@ -21,4 +21,155 @@
   </div>
 </div>
 
-<!-- A
+<!-- ADMIN DASHBOARD -->
+<div id="admin-dashboard" style="display:none;">
+  <div class="admin-nav">
+    <h1>🌿 Farmstand Admin</h1>
+    <div style="display:flex;gap:1.5rem;align-items:center;">
+      <a href="../index.html" target="_blank">View Website ↗</a>
+      <a href="#" onclick="logout()">Log Out</a>
+    </div>
+  </div>
+
+  <div class="admin-container">
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('produce', this)">🌾 Produce List</button>
+      <button class="admin-tab" onclick="switchTab('recipes', this)">📖 Recipes</button>
+      <button class="admin-tab" onclick="switchTab('setup', this)">⚙️ Setup & Help</button>
+    </div>
+
+    <!-- PRODUCE TAB -->
+    <div id="tab-produce" class="tab-panel active">
+      <div class="admin-section">
+        <h2>Manage Today's Produce</h2>
+        <p style="color:#666;font-size:0.9rem;margin-bottom:1.5rem;">
+          Your produce list is managed directly in your Google Sheet. Use the button below to open it — changes show on the website within a minute.
+        </p>
+        <a id="produce-sheet-link" href="#" target="_blank" class="btn-primary" style="text-decoration:none;display:inline-block;">
+          📊 Open Produce Sheet
+        </a>
+        <div style="margin-top:2.5rem;">
+          <h3 style="font-family:'Playfair Display',serif;color:var(--green-dark);margin-bottom:1rem;font-size:1.1rem;">How to update your produce list:</h3>
+          <ol style="padding-left:1.5rem;line-height:2.2;color:#555;font-size:0.92rem;">
+            <li>Click <strong>Open Produce Sheet</strong> above</li>
+            <li>Find the row for the item you want to change</li>
+            <li>In the <strong>Status</strong> column, type one of: <code>Available</code>, <code>Limited</code>, or <code>Unavailable</code></li>
+            <li>To add new produce, add a new row with Name, Description, Emoji, and Status</li>
+            <li>Save the sheet — your website updates automatically!</li>
+          </ol>
+        </div>
+        <div style="margin-top:2rem;padding:1.2rem;background:var(--amber-pale);border-radius:10px;border:1px dashed var(--amber);">
+          <strong style="color:var(--brown-dark);">💡 Tip:</strong>
+          <span style="color:var(--text-mid);font-size:0.9rem;">
+            Bookmark the Google Sheet on your phone — then every morning you can quickly update what's available before customers arrive!
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECIPES TAB -->
+    <div id="tab-recipes" class="tab-panel">
+      <div class="admin-section">
+        <h2>Manage Recipes</h2>
+        <p style="color:#666;font-size:0.9rem;margin-bottom:1.5rem;">
+          Recipes are stored in your Google Sheet on the Recipes tab. Open it below to add or edit recipes.
+        </p>
+        <a id="recipes-sheet-link" href="#" target="_blank" class="btn-primary" style="text-decoration:none;display:inline-block;">
+          📊 Open Recipes Sheet
+        </a>
+        <div style="margin-top:2.5rem;">
+          <h3 style="font-family:'Playfair Display',serif;color:var(--green-dark);margin-bottom:1rem;font-size:1.1rem;">How to add a recipe:</h3>
+          <ol style="padding-left:1.5rem;line-height:2.2;color:#555;font-size:0.92rem;">
+            <li>Click <strong>Open Recipes Sheet</strong> and go to the <strong>Recipes</strong> tab</li>
+            <li>Add a new row at the bottom</li>
+            <li>Fill in: <strong>Title</strong>, <strong>Tag</strong> (e.g. "🍓 Strawberries"), <strong>Description</strong>, <strong>Time</strong>, <strong>Serves</strong></li>
+            <li>For ingredients, separate each one with a pipe <strong>|</strong> character<br>
+              <em>Example:</em> <code>500g strawberries|1 cup sugar|8 basil leaves</code></li>
+            <li>For steps, also separate with a pipe <strong>|</strong><br>
+              <em>Example:</em> <code>Hull strawberries|Combine with sugar|Simmer 25 min</code></li>
+            <li>The recipe appears on the website straight away!</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETUP TAB -->
+    <div id="tab-setup" class="tab-panel">
+      <div class="admin-section">
+        <h2>⚙️ Configuration</h2>
+        <p style="color:#666;font-size:0.9rem;margin-bottom:1.5rem;">
+          Your website settings are in the file <code>js/config.js</code> on GitHub.
+        </p>
+        <div style="background:#f8fdf3;border:2px solid var(--green-soft);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;">
+          <h3 style="color:var(--green-dark);margin-bottom:0.8rem;font-size:1rem;">Current Settings</h3>
+          <table style="width:100%;font-size:0.88rem;border-collapse:collapse;">
+            <tr><td style="padding:0.4rem;color:#888;width:40%;">Sheet ID</td><td id="cfg-sheet-id" style="padding:0.4rem;font-family:monospace;word-break:break-all;"></td></tr>
+            <tr><td style="padding:0.4rem;color:#888;">Site URL</td><td id="cfg-site-url" style="padding:0.4rem;font-family:monospace;font-size:0.8rem;word-break:break-all;"></td></tr>
+            <tr><td style="padding:0.4rem;color:#888;">Farm Address</td><td id="cfg-address" style="padding:0.4rem;"></td></tr>
+            <tr><td style="padding:0.4rem;color:#888;">Opening Hours</td><td id="cfg-hours" style="padding:0.4rem;"></td></tr>
+          </table>
+        </div>
+        <p style="font-size:0.88rem;color:#888;">
+          To change settings, go to your GitHub repo, click <code>js/config.js</code>, then click the pencil ✏️ icon to edit.
+        </p>
+      </div>
+      <div class="admin-section">
+        <h2>🔐 Change Password</h2>
+        <p style="color:#666;font-size:0.9rem;">
+          Your admin password is set in <code>js/config.js</code> — change the <code>ADMIN_PASSWORD</code> value there and commit the change.
+          <br><br>
+          <strong>Important:</strong> This is a simple password system suitable for a small farmstand website.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../js/config.js"></script>
+<script>
+const SESSION_KEY = 'ff_admin_auth';
+
+function doLogin() {
+  const pw = document.getElementById('pw-input').value;
+  if (pw === CONFIG.ADMIN_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    showDashboard();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+
+function showDashboard() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-dashboard').style.display = 'block';
+  document.getElementById('cfg-sheet-id').textContent = CONFIG.SHEET_ID;
+  document.getElementById('cfg-site-url').textContent = CONFIG.SITE_URL;
+  document.getElementById('cfg-address').textContent = CONFIG.FARM_ADDRESS;
+  document.getElementById('cfg-hours').textContent = CONFIG.FARM_HOURS;
+  const sheetBase = 'https://docs.google.com/spreadsheets/d/' + CONFIG.SHEET_ID;
+  document.getElementById('produce-sheet-link').href = sheetBase + '/edit#gid=0';
+  document.getElementById('recipes-sheet-link').href = sheetBase + '/edit';
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  showDashboard();
+}
+</script>
+</body>
+</html>
