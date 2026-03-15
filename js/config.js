@@ -6,7 +6,7 @@
 
 const CONFIG = {
   // Paste your Google Sheet ID here (see instructions)
-  SHEET_ID: "YOUR_SHEET_ID_HERE",
+  SHEET_ID: "1jE6bZCZVFX86lA-oO3GUGAVq7E4nqrwLitML-07_410",
 
   // Your website's public URL
   SITE_URL: "https://freyasfarmgate.github.io/freyas-farmstand",
