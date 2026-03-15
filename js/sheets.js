@@ -38,4 +38,18 @@ const SHEETS = {
 
   // Fetch produce list from "Produce" tab
   async fetchProduce() {
-    const res = await fetch(this.cs
+    const res = await fetch(this.csvUrl('Produce'));
+    if (!res.ok) throw new Error('Could not load produce');
+    const text = await res.text();
+    return this.parseCSV(text);
+  },
+
+  // Fetch recipes from "Recipes" tab
+  async fetchRecipes() {
+    const res = await fetch(this.csvUrl('Recipes'));
+    if (!res.ok) throw new Error('Could not load recipes');
+    const text = await res.text();
+    return this.parseCSV(text);
+  },
+
+};
