@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Us – Freya's Farmstand</title>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Freya's <span>Farmstand</span></div>
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
+  <ul id="nav-links">
+    <li><a href="index.html">Today's Produce</a></li>
+    <li><a href="recipes.html">Recipes</a></li>
+    <li><a href="find-us.html" class="active">Find Us</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <h1>🗺️ Find Us</h1>
+  <p>Fresh from the gate — come visit!</p>
+</div>
+
+<main class="section">
+  <div class="find-us-grid">
+    <div class="info-card">
+      <h3>📍 Location & Hours</h3>
+      <p id="farm-address" style="margin-bottom:1rem;font-weight:600;"></p>
+      <h3 style="margin-bottom:0.5rem;font-size:1.1rem;">Opening Hours</h3>
+      <p id="farm-hours" style="margin-bottom:1rem;"></p>
+      <p style="font-style:italic;font-size:0.9rem;color:#888;">Hours may vary during harvest season — check back here or follow us for updates.</p>
+    </div>
+    <div class="info-card">
+      <h3>🌿 About Our Farm</h3>
+      <p>Freya's Farmstand is a small family-run farmgate operation. Everything we sell is grown right here on our land — no middlemen, no supermarkets, just fresh produce straight from the earth to you.</p>
+      <br>
+      <p>We believe in honest, sustainable growing practices and sharing the bounty of the season with our community.</p>
+      <br>
+      <p><em>~ fresh from the land ~</em></p>
+    </div>
+  </div>
+</main>
+
+<!-- QR CODE SECTION -->
+<div class="qr-section">
+  <h2>📱 Scan to Visit Our Website</h2>
+  <p>Print this QR code and put it on your sign — customers can scan it to see today's produce!</p>
+  <div id="qr-code"></div>
+  <br>
+  <button class="qr-print-btn" onclick="printQR()">🖨️ Print QR Code</button>
+</div>
+
+<footer>
+  <div class="foot-logo">Freya's Farmstand</div>
+  <div class="rune-row">✦ ᚠ ✦ ᛜ ✦</div>
+  <p>Grown with magic · Sold with love</p>
+  <p style="margin-top:0.5rem;opacity:0.6;font-size:0.8rem;"><a href="admin/index.html">Admin</a></p>
+</footer>
+
+<!-- QR Code library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/config.js"></script>
+<script>
+function toggleNav() { document.getElementById('nav-links').classList.toggle('open'); }
+
+document.getElementById('farm-address').textContent = CONFIG.FARM_ADDRESS;
+document.getElementById('farm-hours').textContent = CONFIG.FARM_HOURS;
+
+// Generate QR code pointing to the site URL
+const url = CONFIG.SITE_URL && !CONFIG.SITE_URL.includes('YOUR-USERNAME')
+  ? CONFIG.SITE_URL
+  : window.location.origin + window.location.pathname.replace('find-us.html', '');
+
+new QRCode(document.getElementById('qr-code'), {
+  text: url,
+  width: 200,
+  height: 200,
+  colorDark: '#27500A',
+  colorLight: '#ffffff',
+  correctLevel: QRCode.CorrectLevel.H,
+});
+
+function printQR() {
+  const qrEl = document.getElementById('qr-code');
+  const canvas = qrEl.querySelector('canvas');
+  if (!canvas) { alert('QR code not ready yet, please wait a moment.'); return; }
+  const img = canvas.toDataURL('image/png');
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <html><head><title>Freya's Farmstand QR Code</title>
+    <style>
+      body { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:Georgia,serif; padding:2rem; }
+      img { border: 3px solid #27500A; border-radius:12px; padding:1rem; }
+      h2 { color:#27500A; margin-bottom:0.5rem; }
+      p { color:#633806; font-style:italic; margin-bottom:1.5rem; }
+      small { color:#888; margin-top:1rem; font-size:0.8rem; }
+    </style></head>
+    <body>
+      <h2>Freya's Farmstand</h2>
+      <p>Scan to see today's fresh produce!</p>
+      <img src="${img}" width="250" height="250"/>
+      <small>${url}</small>
+    </body></html>
+  `);
+  win.document.close();
+  win.print();
+}
+</script>
+</body>
+</html>

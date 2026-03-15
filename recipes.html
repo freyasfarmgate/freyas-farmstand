@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipes – Freya's Farmstand</title>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Freya's <span>Farmstand</span></div>
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
+  <ul id="nav-links">
+    <li><a href="index.html">Today's Produce</a></li>
+    <li><a href="recipes.html" class="active">Recipes</a></li>
+    <li><a href="find-us.html">Find Us</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <h1>📖 From Our Kitchen</h1>
+  <p>Simple recipes using what's fresh from the gate</p>
+</div>
+
+<main class="section">
+  <div id="loading-state" class="loading-state">
+    <div class="spinner"></div>
+    <p>Gathering recipes…</p>
+  </div>
+  <div id="recipes-grid" class="recipes-page-grid" style="display:none;"></div>
+  <div id="error-state" class="error-state" style="display:none;">
+    <p>🌿 No recipes posted yet.<br><small>Check back soon!</small></p>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-logo">Freya's Farmstand</div>
+  <div class="rune-row">✦ ᚠ ✦ ᛜ ✦</div>
+  <p>Grown with magic · Sold with love</p>
+  <p style="margin-top:0.5rem;opacity:0.6;font-size:0.8rem;"><a href="admin/index.html">Admin</a></p>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/sheets.js"></script>
+<script>
+function toggleNav() { document.getElementById('nav-links').classList.toggle('open'); }
+
+function renderRecipes(recipes) {
+  const grid = document.getElementById('recipes-grid');
+  document.getElementById('loading-state').style.display = 'none';
+
+  if (!recipes || recipes.length === 0) {
+    document.getElementById('error-state').style.display = 'block';
+    return;
+  }
+
+  grid.innerHTML = recipes.map(r => {
+    const ingredients = (r.ingredients || '').split('|').filter(Boolean);
+    const steps = (r.steps || '').split('|').filter(Boolean);
+    return `
+      <div class="recipe-full-card">
+        <div class="recipe-full-header">
+          <div class="recipe-full-tag">${r.tag || r.category || '🌿 Farm Fresh'}</div>
+          <h3>${r.title || r.name || 'Recipe'}</h3>
+          <div class="recipe-meta-bar" style="color:var(--green-soft)">
+            ${r.time ? `<span>⏱ ${r.time}</span>` : ''}
+            ${r.serves ? `<span>🍽 ${r.serves}</span>` : ''}
+          </div>
+        </div>
+        <div class="recipe-full-body">
+          ${r.description ? `<p>${r.description}</p>` : ''}
+          ${ingredients.length > 0 ? `
+            <div class="recipe-ingredients">
+              <h4>Ingredients</h4>
+              <ul>${ingredients.map(i => `<li>${i.trim()}</li>`).join('')}</ul>
+            </div>` : ''}
+          ${steps.length > 0 ? `
+            <div class="recipe-steps" style="margin-top:1rem;">
+              <h4>Method</h4>
+              <ol>${steps.map(s => `<li>${s.trim()}</li>`).join('')}</ol>
+            </div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+  grid.style.display = 'grid';
+}
+
+async function load() {
+  try {
+    const recipes = await SHEETS.fetchRecipes();
+    renderRecipes(recipes);
+  } catch(e) {
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('error-state').style.display = 'block';
+  }
+}
+
+if (CONFIG.SHEET_ID && CONFIG.SHEET_ID !== 'YOUR_SHEET_ID_HERE') {
+  load();
+} else {
+  renderRecipes([
+    { tag: '🍓 Strawberries', title: 'Strawberry & Basil Jam', description: 'A simple, fragrant preserve that captures the taste of summer in every jar. Uses just three ingredients from today\'s stand.', time: '45 min', serves: 'Makes 3 jars', ingredients: '500g fresh strawberries|1 cup sugar|8 fresh basil leaves', steps: 'Hull and halve the strawberries.|Combine with sugar in a heavy pot. Let sit 20 minutes.|Bring to a boil, stirring, then simmer 25 min until thick.|Stir in torn basil leaves off the heat.|Pour into sterilised jars and seal.' },
+    { tag: '🥕 Heritage Carrots', title: 'Roasted Rainbow Carrot Salad', description: 'Honey-glazed heritage carrots over whipped feta with dukkah and fresh herbs.', time: '30 min', serves: 'Serves 4', ingredients: '600g rainbow carrots|2 tbsp honey|2 tbsp olive oil|200g feta|2 tbsp dukkah|Fresh herbs to serve', steps: 'Preheat oven to 200°C. Halve carrots lengthways.|Toss with honey and oil, season well.|Roast 20–25 min until caramelised.|Whip feta with a splash of olive oil until smooth.|Spread feta on a plate, top with carrots, dukkah and herbs.' },
+    { tag: '🌽 Sweet Corn', title: 'Summer Corn Fritters', description: 'Crispy golden fritters with fresh corn, zucchini and spring onion.', time: '20 min', serves: 'Serves 2–3', ingredients: '2 ears fresh corn (kernels cut off)|1 small zucchini, grated|3 spring onions, sliced|2 eggs|½ cup flour|Salt and pepper|Oil for frying', steps: 'Squeeze moisture from grated zucchini in a tea towel.|Mix corn, zucchini, onions, eggs and flour. Season well.|Heat oil in a pan over medium-high heat.|Drop spoonfuls into pan, flatten slightly.|Cook 2–3 min each side until golden. Serve with sour cream.' },
+  ]);
+}
+</script>
+</body>
+</html>
