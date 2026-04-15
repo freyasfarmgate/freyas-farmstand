@@ -11,25 +11,45 @@ const SHEETS = {
   },
 
   // Parse raw CSV text into an array of objects
+  // Handles quoted fields that contain commas or newlines (multi-line cells)
   parseCSV(text) {
-    const lines = text.trim().split('\n');
-    if (lines.length < 2) return [];
-    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
-    return lines.slice(1).map(line => {
-      const values = [];
-      let current = '';
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        if (line[i] === '"') {
-          inQuotes = !inQuotes;
-        } else if (line[i] === ',' && !inQuotes) {
-          values.push(current.trim());
-          current = '';
-        } else {
-          current += line[i];
-        }
+    const rows = [];
+    let current = '';
+    let inQuotes = false;
+
+    // Walk character by character to handle quoted newlines
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (ch === '"') {
+        inQuotes = !inQuotes;
+      } else if (ch === '\n' && !inQuotes) {
+        rows.push(current);
+        current = '';
+      } else {
+        current += ch;
       }
-      values.push(current.trim());
+    }
+    if (current.trim()) rows.push(current);
+
+    if (rows.length < 2) return [];
+
+    const parseRow = (line) => {
+      const values = [];
+      let cur = '';
+      let inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        if (line[i] === '"') { inQ = !inQ; }
+        else if (line[i] === ',' && !inQ) { values.push(cur.trim()); cur = ''; }
+        else { cur += line[i]; }
+      }
+      values.push(cur.trim());
+      return values;
+    };
+
+    const headers = parseRow(rows[0]).map(h => h.replace(/"/g, '').trim().toLowerCase());
+
+    return rows.slice(1).map(line => {
+      const values = parseRow(line);
       const obj = {};
       headers.forEach((h, i) => { obj[h] = values[i] || ''; });
       return obj;
